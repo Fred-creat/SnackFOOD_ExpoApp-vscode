@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "SnackFOOD",
+    "slug": "snackfood_expoapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "assets/images/logosnack.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "assets/images/logosnack.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "com.snackfood.app"
+    }
+  }
+}
