@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { API_URL } from "../api";
 import {
   ScrollView,
   TouchableOpacity,
@@ -118,16 +119,99 @@ const salgados = [
   },
 ];
 
-export default function MenuScreen() {
+export default function MenuScreen({ navigation }) {
   const [selectedMenu, setSelectedMenu] = useState(null);
+  const [bolosData, setBolosData] = useState([]);
+  const [docesData, setDocesData] = useState([]);
+  const [salgadosData, setSalgadosData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`${API_URL}/bolos`)
+      .then((res) => res.json())
+      .then((data) => setBolosData(data))
+      .catch((err) => {
+        console.log('Erro ao buscar bolos:', err);
+        setBolosData([]);
+      });
+    fetch(`${API_URL}/doces`)
+      .then((res) => res.json())
+      .then((data) => setDocesData(data))
+      .catch((err) => {
+        console.log('Erro ao buscar doces:', err);
+        setDocesData([]);
+      });
+    fetch(`${API_URL}/salgados`)
+      .then((res) => res.json())
+      .then((data) => setSalgadosData(data))
+      .catch((err) => {
+        console.log('Erro ao buscar salgados:', err);
+        setSalgadosData([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Busca de estoque com tratamento de erro e log
+  useEffect(() => {
+    fetch(`${API_URL}/estoque`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Erro ao buscar estoque');
+        return res.json();
+      })
+      .then((data) => {
+        console.log('Estoque recebido:', data);
+      })
+      .catch((err) => {
+        console.log('Erro ao buscar estoque:', err);
+      });
+  }, []);
+
+  // Mapeamento estático de imagens
+const imageMap = {
+  'bolo.png': require('../assets/images/bolo.png'),
+  'trufas.png': require('../assets/images/trufas.png'),
+  'brigadeiro.png': require('../assets/images/brigadeiro.png'),
+  'beijinhos.png': require('../assets/images/beijinhos.png'),
+  'casadinho.png': require('../assets/images/casadinho.png'),
+  'cajuzinho.png': require('../assets/images/cajuzinho.png'),
+  'moranguinho.png': require('../assets/images/moranguinho.png'),
+  'uva-encapada.png': require('../assets/images/uva-encapada.png'),
+  'cerejinnha.png': require('../assets/images/cerejinnha.png'),
+  'coxinha.png': require('../assets/images/coxinha.png'),
+  'pastel.png': require('../assets/images/pastel.png'),
+  'bolinha-queijo.png': require('../assets/images/bolinha-queijo.png'),
+  'kibe.png': require('../assets/images/kibe.png'),
+  'enroladinho.png': require('../assets/images/enroladinho.png'),
+  'camarao-empanado.png': require('../assets/images/camarao-empanado.png'),
+  // Adicione outros nomes de imagem conforme necessário
+};
+
+  // Função utilitária para mapear imagens vindas do backend
+  function mapImage(product) {
+    if (typeof product.image === 'string' && imageMap[product.image]) {
+      return {
+        ...product,
+        image: imageMap[product.image]
+      };
+    }
+    // Se não encontrar, retorna imagem padrão
+    if (typeof product.image === 'string') {
+      return {
+        ...product,
+        image: imageMap['bolo.png']
+      };
+    }
+    return product;
+  }
 
   let productsToShow = [];
-  if (selectedMenu === "Bolos") productsToShow = bolos;
-  else if (selectedMenu === "Doces") productsToShow = doces;
-  else if (selectedMenu === "Salgados") productsToShow = salgados;
+  if (selectedMenu === "Bolos") productsToShow = bolosData.length ? bolosData.map(mapImage) : bolos;
+  else if (selectedMenu === "Doces") productsToShow = docesData.length ? docesData.map(mapImage) : doces;
+  else if (selectedMenu === "Salgados") productsToShow = salgadosData.length ? salgadosData.map(mapImage) : salgados;
 
   return (
-    <Layout>
+    <Layout onCartPress={() => navigation.navigate('Carrinho')}>
       {!selectedMenu ? (
         <View>
           <Text style={styles.titlecardapio}>Cardápios:</Text>

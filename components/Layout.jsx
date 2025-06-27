@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
+import FloatingCart from './FloatingCart';
 
-export default function Layout({ children }) {
+export default function Layout({ children, showCart = true, onCartPress }) {
   return (
     <ImageBackground
       source={require('../assets/images/coxinha.png')}
@@ -10,6 +11,7 @@ export default function Layout({ children }) {
     >
       <View style={styles.container}>
         {children}
+        {showCart && <FloatingCart onPress={onCartPress} />}
       </View>
     </ImageBackground>
   );

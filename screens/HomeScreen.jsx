@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 
 export default function HomeScreen({ navigation }) {
   return (
-    <Layout>
+    <Layout onCartPress={() => navigation.navigate('Carrinho')}>
       <View style={styles.center}>
         <Text style={styles.title}>Bem-vindo à Snack FooD!</Text>
         <Text style={styles.subtitle}>O melhor cardápio de bolos, doces e salgados para você!</Text>
