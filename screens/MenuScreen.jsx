@@ -181,7 +181,7 @@ const imageMap = {
   'coxinha.png': require('../assets/images/coxinha.png'),
   'pastel.png': require('../assets/images/pastel.png'),
   'bolinha-queijo.png': require('../assets/images/bolinha-queijo.png'),
-  'kibe.png': require('../assets/images/kibe.png'),
+ 
   'enroladinho.png': require('../assets/images/enroladinho.png'),
   'camarao-empanado.png': require('../assets/images/camarao-empanado.png'),
   // Adicione outros nomes de imagem conforme necessário
@@ -205,6 +205,32 @@ const imageMap = {
     return product;
   }
 
+  // Função para enviar pedido de teste
+  function enviarPedidoExemplo() {
+    fetch(`${API_URL}/pedidos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nomeCliente: 'Nome do Cliente',
+        endereco: 'Endereço do Cliente',
+        telefone: '11999999999',
+        itens: [
+          { nome: 'Bolo de 15cm', quantidade: 1, preco: 110 },
+          { nome: 'Coxinha', quantidade: 10, preco: 1.1 }
+        ]
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Pedido enviado com sucesso:', data);
+        alert('Pedido enviado com sucesso!');
+      })
+      .catch(err => {
+        console.log('Erro ao enviar pedido:', err);
+        alert('Erro ao enviar pedido!');
+      });
+  }
+
   let productsToShow = [];
   if (selectedMenu === "Bolos") productsToShow = bolosData.length ? bolosData.map(mapImage) : bolos;
   else if (selectedMenu === "Doces") productsToShow = docesData.length ? docesData.map(mapImage) : doces;
@@ -226,6 +252,7 @@ const imageMap = {
               </TouchableOpacity>
             ))}
           </View>
+          {/* Botão de teste removido */}
         </View>
       ) : (
         <ScrollView>

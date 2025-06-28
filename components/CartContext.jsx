@@ -21,8 +21,13 @@ export function CartProvider({ children }) {
     setCart((prev) => prev.filter((item) => item.name !== productName));
   }
 
+  // Limpa o carrinho
+  function clearCart() {
+    setCart([]);
+  }
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
       {children}
     </CartContext.Provider>
   );

@@ -12,7 +12,7 @@ const paymentMethods = [
 ];
 
 export default function CartScreen({ navigation }) {
-  const { cart, removeFromCart } = useCart();
+  const { cart, removeFromCart, clearCart } = useCart();
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -38,11 +38,15 @@ export default function CartScreen({ navigation }) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        nome: name,
+        nomeCliente: name, // Corrigido para nomeCliente
         endereco: address,
         telefone: phone,
-        pagamento: selectedPayment,
-        itens: cart,
+        itens: cart.map(item => ({
+          nome: item.name,
+          quantidade: item.qty,
+          price: item.price,
+          recheio: item.recheio
+        })),
         total: totalPrice
       })
     })
@@ -54,7 +58,13 @@ export default function CartScreen({ navigation }) {
       })
       .then(data => {
         Alert.alert('Pedido enviado!', 'Seu pedido foi recebido com sucesso.');
-        // Aqui você pode limpar o carrinho ou navegar para outra tela
+        clearCart(); // Limpa o carrinho após o envio
+        setName("");
+        setAddress("");
+        setPhone("");
+        setSelectedPayment(null);
+        setShowPix(false);
+        // Você pode navegar para outra tela se quiser
       })
       .catch((err) => {
         console.log('Erro ao enviar pedido:', err);
@@ -101,22 +111,25 @@ export default function CartScreen({ navigation }) {
       <Text style={styles.formTitle}>Dados para entrega:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nome completo"
+        placeholder="Nome do cliente"
         value={name}
         onChangeText={setName}
+        autoCapitalize="words"
       />
       <TextInput
         style={styles.input}
         placeholder="Endereço de entrega"
         value={address}
         onChangeText={setAddress}
+        autoCapitalize="words"
       />
       <TextInput
         style={styles.input}
-        placeholder="Telefone para contato"
+        placeholder="Telefone (WhatsApp)"
         value={phone}
         onChangeText={setPhone}
         keyboardType="phone-pad"
+        maxLength={15}
       />
       <TouchableOpacity style={styles.finishButton} onPress={handleFinishOrder} disabled={loading}>
         <Text style={styles.finishButtonText}>{loading ? 'Enviando...' : 'Finalizar Pedido'}</Text>
